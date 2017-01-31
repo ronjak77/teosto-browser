@@ -1,40 +1,60 @@
 <template>
-  <div class="teosto">
-    <h1>{{ msg }}</h1>
-    <form>
-      <div class="row">
-        <div class="six columns">
-          <label for="exampleInput">Example input</label>
-          <input id="exampleInput" type="text" placeholder="Song name" class="u-full-width"/>
-        </div>
-        <div class="six columns">
-          <label for="exampleSelectInput">Select list</label>
-          <select id="exampleSelectInput" class="u-full-width">
-            <option value="Option 1">Option 1</option>
-            <option value="Option 2">Option 2</option>
-            <option value="Option 3">Option 3</option>
-          </select>
-        </div>
-      </div>
-      <label for="exampleMessage">Message</label>
-      <textarea id="exampleMessage" placeholder="Large textbox" class="u-full-width"></textarea>
-      <label class="example-checkbox">
-        <input type="checkbox"/><span class="label-body">Checkbox</span>
-      </label>
-      <input type="submit" value="Submit" class="button-primary"/>
+  <div id="teosto">
+    <h1>Song search</h1>
+    <h3>{{ input }}</h3>
+
+    <template v-if="searchResults">
+      <ul>
+        <li v-for="work in searchResults.works">
+          <a :href="work.url" target="_blank">{{ work.title }}</a>
+        </li>
+      </ul>
+    </template>
+
+    <form v-on:submit="fetchData">
+      <label for="searchInput">Song search input</label>
+      <input id="searchInput" :value="input" @input="update" type="text" placeholder="Song name" class="u-full-width"/>
+      <input type="submit" value="Search" class="button-primary"/>
     </form>
+
   </div>
 </template>
 
 <script>
+/*eslint-disable */
+
+var apiURL = 'http://api.teosto.fi/2015/work?title='
+
 export default {
-  name: 'hello',
-  data () {
+  name: 'teosto',
+
+  data() {
     return {
-      msg: 'Welcome to Teosto Open API browser'
+      searchResults: null,
+      input: ''
+    }
+  },
+
+  methods: {
+    fetchData: function (e) {
+      e.preventDefault()
+      var xhr = new XMLHttpRequest()
+      var self = this
+      xhr.open('GET', apiURL + self.input)
+      xhr.onload = function () {
+        console.log(xhr)
+        self.searchResults = JSON.parse(xhr.response)
+        console.log(self.works)
+      }
+      xhr.send()
+    },
+    update: function (e) {
+      this.input = e.target.value
     }
   }
 }
+
+/*eslint-enable */
 </script>
 
 <style lang="stylus" scoped>
