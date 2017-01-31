@@ -1,22 +1,25 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <hello></hello>
+    <div class="container">
+      <div class="row"><img src="./assets/logo.png"/>
+        <teosto></teosto>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import Hello from './components/Hello'
+import Teosto from './components/Teosto'
 
 export default {
   name: 'app',
   components: {
-    Hello
+    Teosto
   }
 }
 </script>
 
-<style>
+<style lang="stylus">
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
