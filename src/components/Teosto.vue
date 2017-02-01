@@ -1,34 +1,34 @@
 <template>
   <div id="teosto">
     <h1>Song search</h1>
-    <h3>{{ input }}</h3>
+
+    <div class="row">
+      <div class="twelve columns">
+        <form v-on:submit="fetchData">
+          <label for="searchInput">Song search input</label>
+          <input id="searchInput" :value="input" @input="update" type="text" placeholder="Song name" class="u-full-width"/>
+          <input type="submit" value="Search" class="button-primary"/>
+        </form>
+      </div>
+    </div>
+
 
     <template v-if="searchResults">
+      <h3>{{ searchResults.response_meta.works }} {{ searchResults.response_meta.works == 1 ? 'title' : 'titles' }} found </h3>
       <ul>
         <li v-for="work in searchResults.works">
           <a :href="work.url" target="_blank">{{ work.title }}</a>
         </li>
       </ul>
     </template>
-
-    <form v-on:submit="fetchData">
-      <label for="searchInput">Song search input</label>
-      <input id="searchInput" :value="input" @input="update" type="text" placeholder="Song name" class="u-full-width"/>
-      <input type="submit" value="Search" class="button-primary"/>
-    </form>
-
   </div>
 </template>
 
 <script>
-/*eslint-disable */
-
-var apiURL = 'http://api.teosto.fi/2015/work?title='
-
 export default {
   name: 'teosto',
 
-  data() {
+  data () {
     return {
       searchResults: null,
       input: ''
@@ -38,15 +38,13 @@ export default {
   methods: {
     fetchData: function (e) {
       e.preventDefault()
-      var xhr = new XMLHttpRequest()
       var self = this
-      xhr.open('GET', apiURL + self.input)
-      xhr.onload = function () {
-        console.log(xhr)
-        self.searchResults = JSON.parse(xhr.response)
-        console.log(self.works)
-      }
-      xhr.send()
+
+      this.$http.get(`http://api.teosto.fi/2015/work?title=${self.input}`).then(responsedata => {
+        self.searchResults = responsedata.data
+      }, response => {
+        console.log(response)
+      })
     },
     update: function (e) {
       this.input = e.target.value
@@ -54,17 +52,9 @@ export default {
   }
 }
 
-/*eslint-enable */
 </script>
 
 <style lang="stylus" scoped>
-h1, h2
-  font-weight 400
-  color emerald
-
-ul
-  list-style-type none
-  padding 0
 
 li
   display inline-block
