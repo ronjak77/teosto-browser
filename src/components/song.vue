@@ -1,21 +1,43 @@
 <template>
   <section class="song">
-    <button v-on:click="toggleData" class="button-toggle">
+    <button v-on:click="fetchSong" class="button-toggle">
       <p>{{ workData.title }} &#9660;</p>
     </button>
-    <template v-if="showDetails">
-      <template v-if="songDetails">
-        <div class="song-details">
-          <p v-for="author in songDetails.work.authors"><strong>{{ author.role.title }}:</strong> {{ author.author.firstname }} {{ author.author.lastname }} </p>
-          <p>--- played {{ songDetails.work.shows.count }} times</p>
-          <button>View where it's been played</button>
-          {{ songDetails.work.shows.url }}
-          <button>View top municipalities</button>
-          {{ songDetails.work.topMunicipalities.url }}
-          <button>View top venues</button>
-          {{ songDetails.work.topVenues.url }}
-        </div>
-      </template>
+
+    <template v-if="songDetails !== null">
+
+      <div class="song-details">
+        <table class="u-full-width">
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Author first name</th>
+              <th>Author surname</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="author in songDetails.work.authors">
+              <td><strong>{{ author.role.title }}</strong></td>
+              <td>{{ author.author.firstname }}</td>
+              <td>{{ author.author.lastname }}</td>
+          </tbody>
+        </table>
+
+        <h5>Play times: {{ songDetails.work.shows.count }} in 2015.</h5>
+        <button v-on:click="loadMore(songDetails.work.shows.url)">View where it's been played</button>
+        <template v-if="showDetails !== null">
+
+          <ul>
+            <li v-for="show in showDetails.shows">{{ show.event.name }} on {{ show.event.startDate }} - {{ show.event.endDate }}</li>
+          </ul>
+
+        </template>
+        <button>View top municipalities</button>
+        {{ songDetails.work.topMunicipalities.url }}
+        <button>View top venues</button>
+        {{ songDetails.work.topVenues.url }}
+      </div>
+
     </template>
   </section>
 </template>
@@ -27,7 +49,7 @@ export default {
   data () {
     return {
       songDetails: null,
-      showDetails: false
+      showDetails: null
     }
   },
 
@@ -35,25 +57,34 @@ export default {
 
   watch: {
     workData: function (val) {
-      this.fetchData()
+      this.songDetails = null
+      this.fetchSong()
     }
   },
 
   methods: {
-    toggleData: function (e) {
-      if (!this.showDetails && this.songDetails === null) {
-        this.fetchData()
+    fetchSong: function (e) {
+      if (this.songDetails === null) {
+        var self = this
+        this.$http.get(this.workData.url).then(responsedata => {
+          self.songDetails = responsedata.data
+          self.songDetails.display = true
+          console.log(self.songDetails)
+        }, response => {
+          console.log('There was a problem contacting the API')
+        })
       }
-      this.showDetails = !this.showDetails
     },
-    fetchData: function (e) {
-      var self = this
-      this.$http.get(this.workData.url).then(responsedata => {
-        self.songDetails = responsedata.data
-        console.log(self.songDetails)
-      }, response => {
-        console.log(response)
-      })
+    loadMore: function (loadurl) {
+      if (this.showDetails === null) {
+        var self = this
+        this.$http.get(loadurl).then(responsedata => {
+          self.showDetails = responsedata.data
+          console.log(self.showDetails)
+        }, response => {
+          console.log('There was a problem contacting the API')
+        })
+      }
     }
   }
 }
@@ -78,6 +109,10 @@ export default {
   text-overflow ellipsis
 
 .song-details p
+  padding-left 2em
+  margin-bottom 1em
+
+.song-details a
   padding-left 2em
   margin-bottom 1em
 
