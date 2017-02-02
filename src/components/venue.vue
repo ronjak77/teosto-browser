@@ -4,14 +4,20 @@
       <p><strong>{{ searchResults.venue.name }}</strong></p>
       <p>{{ searchResults.venue.place.address.streetAddress }}</p>
       <p>{{ searchResults.venue.place.address.zipCode }} {{ searchResults.venue.place.address.postOffice }}</p>
-    </template>
-    <div class="row">
-      <div class="twelve columns">
-        <div id="map"></div>
+      <template v-if="venueLocationAvailable">
+        <button v-on:click="loadMap">Show on map</button>
+      </template>
+      <template v-if="venueLocationUnavailable">
+      <p>Location coordinates unavailable</p>
+      </template>
+      <div class="row">
+        <div class="twelve columns">
+          <div id="map" class="hidden"></div>
+        </div>
       </div>
-    </div>
-    <router-link :to="($route.params.id + '/topWorks')">
-      Top Works
+    </template>
+    <router-link :to="('/venue/' + $route.params.id + '/topWorks')">
+      <button>Top Works</button>
     </router-link>
     <router-view></router-view>
   </div>
@@ -25,7 +31,10 @@ export default {
   data () {
     return {
       searchResults: null,
-      googleMapsLoaded: false
+      googleMapsLoaded: false,
+      showMap: false,
+      venueLocationAvailable: false,
+      venueLocationUnavailable: false
     }
   },
 
@@ -39,7 +48,12 @@ export default {
       var id = this.$route.params.id
       this.$http.get(`http://api.teosto.fi/2015/venue?id=${id}`).then(responseData => {
         self.searchResults = responseData.data
-        self.loadMap()
+        var coordinates = self.searchResults.venue.place.geoCoordinates
+        if (isNaN(parseFloat(coordinates.latitude))) {
+          self.venueLocationUnavailable = true
+        } else {
+          self.venueLocationAvailable = true
+        }
       }, response => {
         console.log(response)
       })
@@ -47,6 +61,7 @@ export default {
     loadMap: function (e) {
       var self = this
       var allParas = document.getElementsByTagName('script')
+      var coordinates = self.searchResults.venue.place.geoCoordinates
       for (var v of allParas) {
         if (v.src.indexOf('googleapis.com/maps-api') > 0) {
           self.googleMapsLoaded = true
@@ -54,13 +69,13 @@ export default {
       }
 
       if (self.googleMapsLoaded) {
-        self.loadSingleMap(self.searchResults.venue.place.geoCoordinates)
+        self.loadSingleMap(coordinates)
       }
 
       if (this.googleMapsLoaded === false) {
         loadGoogleMapsAPI({key: 'AIzaSyA1rSIoursUGnFNofPFb8Z2EVdP8J429wg'}).then((googleMaps) => {
           window.googleMaps = googleMaps
-          self.loadSingleMap(self.searchResults.venue.place.geoCoordinates)
+          self.loadSingleMap(coordinates)
         }).catch((err) => {
           console.error(err)
         })
@@ -71,11 +86,13 @@ export default {
       var lat = parseFloat(coords.latitude)
       var lng = parseFloat(coords.longitude)
 
+      document.getElementById('map').className = ''
       var location = {lat: lat, lng: lng}
       var map = new googleMaps.Map(document.getElementById('map'), {
-        zoom: 10,
+        zoom: 12,
         center: location
       })
+
       var marker = new googleMaps.Marker({
         position: location,
         map: map
@@ -86,10 +103,14 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 #map {
-   width: 100%;
-   height: 400px;
-   background-color: grey;
- }
+  width: 100%;
+  height: 400px;
+  background-color: grey;
+  margin-bottom: 2em
+}
+#map.hidden {
+  display: none;
+}
 </style>

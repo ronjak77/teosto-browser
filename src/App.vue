@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="container">
-      <h1>Teosto app</h1>
+      <h1><router-link to="/" class="branding">Teosto app</router-link></h1>
       <p>
         <router-link to="/venues">Venue search</router-link>
         <router-link to="/search">Song search</router-link>
@@ -24,4 +24,7 @@
 li
   display block
 
+.branding
+  text-decoration none
+  color darken(appcolor, 60%)
 </style>

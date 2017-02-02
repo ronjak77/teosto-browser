@@ -30,12 +30,6 @@ export default {
     }
   },
 
-  watch: {
-    $route: function (to, from) {
-      console.log(55, to, from)
-    }
-  },
-
   methods: {
     fetchData: function (e) {
       e.preventDefault()

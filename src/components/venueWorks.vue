@@ -1,7 +1,7 @@
 <template>
   <div class="topWorks">
   <template v-if="searchResults !== null">
-    <table>
+    <table class="u-full-width">
       <thead>
         <tr>
           <th>Title</th>
@@ -42,11 +42,13 @@ export default {
   methods: {
     fetchData: function (e) {
       var self = this
-      this.$http.get(`http://api.teosto.fi/2015/venue?id=${this.$route.params.id}&method=topWorks`).then(responseData => {
-        self.searchResults = responseData.data
-      }, response => {
-        console.log(response)
-      })
+      if (this.searchResults === null) {
+        this.$http.get(`http://api.teosto.fi/2015/venue?id=${this.$route.params.id}&method=topWorks`).then(responseData => {
+          self.searchResults = responseData.data
+        }, response => {
+          console.log(response)
+        })
+      }
     }
   }
 }
