@@ -75,7 +75,7 @@ export default {
       }
 
       if (this.googleMapsLoaded === false) {
-        loadGoogleMapsAPI({key: 'AIzaSyA1rSIoursUGnFNofPFb8Z2EVdP8J429wg'}).then((googleMaps) => {
+        loadGoogleMapsAPI({key: process.env.MAPS_API}).then((googleMaps) => {
           window.googleMaps = googleMaps
           self.loadSingleMap(coordinates)
         }).catch((err) => {

@@ -1,6 +1,9 @@
-# teosto
+# Teosto browser
 
 > Teosto data exploration tool
+
+Teosto, Finnish Composers' Copyright Society, collects data on live music performances so that they can pay royalties to the authors and publishers.
+Their [API documentation](http://api.teosto.fi/#introduction) explains what data is available. The Terms and Conditions for the API [is available here.](http://api.teosto.fi/termsandconditions.html)
 
 ## Build Setup
 
@@ -13,6 +16,7 @@ npm run dev
 
 # build for production with minification
 npm run build
+
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+Uses [vue-router](https://github.com/vuejs/vue-router) for routing. CSS boilerplate from [skeleton](http://getskeleton.com).
