@@ -10,7 +10,10 @@
         <div id="map"></div>
       </div>
     </div>
-
+    <router-link :to="($route.params.id + '/topWorks')">
+      Top Works
+    </router-link>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -22,7 +25,7 @@ export default {
   data () {
     return {
       searchResults: null,
-      googleMaps: null
+      googleMapsLoaded: false
     }
   },
 
@@ -34,37 +37,50 @@ export default {
     fetchData: function (e) {
       var self = this
       var id = this.$route.params.id
-      console.log(e)
       this.$http.get(`http://api.teosto.fi/2015/venue?id=${id}`).then(responseData => {
         self.searchResults = responseData.data
-        console.log(9999, self.googleMaps)
         self.loadMap()
       }, response => {
         console.log(response)
       })
     },
     loadMap: function (e) {
-      console.log('LOADING MAAP')
-      if (this.googleMaps === null) {
-        loadGoogleMapsAPI({key: 'AIzaSyA1rSIoursUGnFNofPFb8Z2EVdP8J429wg'}).then((googleMaps) => {
-          var lat = parseFloat(this.searchResults.venue.place.geoCoordinates.latitude)
-          var lng = parseFloat(this.searchResults.venue.place.geoCoordinates.longitude)
+      var self = this
+      var allParas = document.getElementsByTagName('script')
+      for (var v of allParas) {
+        if (v.src.indexOf('googleapis.com/maps-api') > 0) {
+          self.googleMapsLoaded = true
+        }
+      }
 
-          var location = {lat: lat, lng: lng}
-          var map = new googleMaps.Map(document.getElementById('map'), {
-            zoom: 10,
-            center: location
-          })
-          var marker = new googleMaps.Marker({
-            position: location,
-            map: map
-          })
-          console.log(34, marker)
-          this.googleMaps = googleMaps
+      if (self.googleMapsLoaded) {
+        self.loadSingleMap(self.searchResults.venue.place.geoCoordinates)
+      }
+
+      if (this.googleMapsLoaded === false) {
+        loadGoogleMapsAPI({key: 'AIzaSyA1rSIoursUGnFNofPFb8Z2EVdP8J429wg'}).then((googleMaps) => {
+          window.googleMaps = googleMaps
+          self.loadSingleMap(self.searchResults.venue.place.geoCoordinates)
         }).catch((err) => {
           console.error(err)
         })
       }
+    },
+    loadSingleMap: function (coords) {
+      var googleMaps = window.googleMaps
+      var lat = parseFloat(coords.latitude)
+      var lng = parseFloat(coords.longitude)
+
+      var location = {lat: lat, lng: lng}
+      var map = new googleMaps.Map(document.getElementById('map'), {
+        zoom: 10,
+        center: location
+      })
+      var marker = new googleMaps.Marker({
+        position: location,
+        map: map
+      })
+      marker.setLabel(this.searchResults.venue.place.name)
     }
   }
 }

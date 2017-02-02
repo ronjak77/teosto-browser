@@ -10,6 +10,7 @@ import './assets/css/skeleton.css'
 import songSearch from './components/songsearch'
 import venueSearch from './components/venuesearch'
 import Venue from './components/venue'
+import VenueWorks from './components/venueworks'
 /* eslint-disable no-new */
 
 Vue.use(VueResource)
@@ -32,12 +33,8 @@ const routes = [
     component: Venue,
     children: [
       {
-        path: 'profile',
-        component: Venue
-      },
-      {
-        path: 'posts',
-        component: Venue
+        path: 'topworks',
+        component: VenueWorks
       }
     ]
   },
