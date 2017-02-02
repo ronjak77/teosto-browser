@@ -19,4 +19,6 @@ npm run build
 
 ```
 
+To use Google Maps API, edit config/mapsApi.env and replace API_KEY_HERE with an API key.
+
 Uses [vue-router](https://github.com/vuejs/vue-router) for routing. CSS boilerplate from [skeleton](http://getskeleton.com).
