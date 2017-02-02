@@ -26,16 +26,12 @@
         <h5>Play times: {{ songDetails.work.shows.count }} in 2015.</h5>
         <button v-on:click="loadMore(songDetails.work.shows.url)">View where it's been played</button>
         <template v-if="showDetails !== null">
-
           <ul>
             <li v-for="show in showDetails.shows">{{ show.event.name }} on {{ show.event.startDate }} - {{ show.event.endDate }}</li>
           </ul>
-
         </template>
-        <button>View top municipalities</button>
-        {{ songDetails.work.topMunicipalities.url }}
-        <button>View top venues</button>
-        {{ songDetails.work.topVenues.url }}
+
+        <router-link :to="('/work/' + songDetails.work.id + '/topvenues')"><button>View top venues</button></router-link>
       </div>
 
     </template>
@@ -113,8 +109,6 @@ export default {
   margin-bottom 1em
 
 .song-details a
-  padding-left 2em
-  margin-bottom 1em
-
-
+  text-decoration none
+  color #555
 </style>

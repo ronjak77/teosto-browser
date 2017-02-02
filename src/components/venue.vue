@@ -1,26 +1,28 @@
 <template>
-  <div class="venue">
-    <template v-if="searchResults !== null">
-      <p><strong>{{ searchResults.venue.name }}</strong></p>
-      <p>{{ searchResults.venue.place.address.streetAddress }}</p>
-      <p>{{ searchResults.venue.place.address.zipCode }} {{ searchResults.venue.place.address.postOffice }}</p>
-      <template v-if="venueLocationAvailable">
-        <button v-on:click="loadMap">Show on map</button>
-      </template>
-      <template v-if="venueLocationUnavailable">
-      <p>Location coordinates unavailable</p>
-      </template>
-      <div class="row">
-        <div class="twelve columns">
-          <div id="map" class="hidden"></div>
+  <section>
+    <div class="venue">
+      <template v-if="searchResults !== null">
+        <p><strong>{{ searchResults.venue.name }}</strong></p>
+        <p>{{ searchResults.venue.place.address.streetAddress }}</p>
+        <p>{{ searchResults.venue.place.address.zipCode }} {{ searchResults.venue.place.address.postOffice }}</p>
+        <template v-if="venueLocationAvailable">
+          <button v-on:click="loadMap">Show on map</button>
+        </template>
+        <template v-if="venueLocationUnavailable">
+        <p>Location coordinates unavailable</p>
+        </template>
+        <div class="row">
+          <div class="twelve columns">
+            <div id="map" class="hidden"></div>
+          </div>
         </div>
-      </div>
-    </template>
-    <router-link :to="('/venue/' + $route.params.id + '/topWorks')">
-      <button>Top Works</button>
-    </router-link>
-    <router-view></router-view>
-  </div>
+      </template>
+      <router-link :to="('/venue/' + $route.params.id + '/topWorks')">
+        <button>Top Works</button>
+      </router-link>
+      <router-view></router-view>
+    </div>
+  </section>
 </template>
 
 <script>

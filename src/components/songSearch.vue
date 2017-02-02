@@ -1,7 +1,6 @@
 <template>
   <div class="search">
     <section class="center">
-      <h1>Song search</h1>
       <div class="row">
         <div class="twelve columns">
           <form v-on:submit="fetchData">
@@ -15,6 +14,7 @@
 
     <template v-if="searchResults">
       <h3>{{ searchResults.response_meta.works }} {{ searchResults.response_meta.works == 1 ? 'title' : 'titles' }} found </h3>
+      <p>{{ searchResults.response_meta.page }} of {{ searchResults.response_meta.pages }} pages</p>
       <ul>
         <li v-for="work in searchResults.works">
           <song :workData="work"></song>
